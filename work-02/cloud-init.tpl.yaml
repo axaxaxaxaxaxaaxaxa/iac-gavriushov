@@ -16,3 +16,11 @@ runcmd:
   - bash -c 'echo "${GREETING} on $(hostname)" > /var/www/html/index.nginx-debian.html'
   - nginx -t
   - systemctl restart nginx
+  # Условие, чтобы доп. диск был только у первой ВМ
+  - |
+    if [ -b /dev/disk/by-id/virtio-data ]; then
+      mkfs.ext4 /dev/disk/by-id/virtio-data
+      mkdir -p /mnt/data
+      echo '/dev/disk/by-id/virtio-data /mnt/data ext4 defaults,nofail 0 2' >> /etc/fstab
+      mount /mnt/data
+    fi
